@@ -20,6 +20,7 @@
 		"build": "pnpm clean && rollup --config && mv tmp/*.js dist && attw --pack .",
 		"prepublishOnly": "pnpm run build",
 		"ci:release": "changeset publish",
+		"changeset-version": "changeset version && pnpm format",
 		"version": "changeset version && pnpm i --lockfile-only"
 	},
 	"repository": {

@@ -1,9 +1,9 @@
-export { Result, ok, Ok, err, Err, fromThrowable, safeTry } from './result'
+export { Err, err, fromThrowable, Ok, ok, Result, safeTry } from "./result";
 export {
-  ResultAsync,
-  okAsync,
-  errAsync,
-  fromAsyncThrowable,
-  fromPromise,
-  fromSafePromise,
-} from './result-async'
+	errAsync,
+	fromAsyncThrowable,
+	fromPromise,
+	fromSafePromise,
+	okAsync,
+	ResultAsync,
+} from "./result-async";

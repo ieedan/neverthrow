@@ -872,9 +872,9 @@ describe("ResultAsync", () => {
 			expect(allResult[0]._unsafeUnwrap()).toEqual("1");
 		});
 
-		it("rejects if the underlying promise is rejected", () => {
+		it("rejects if the underlying promise is rejected", async () => {
 			const asyncResult = new ResultAsync(Promise.reject("oops"));
-			expect(asyncResult).rejects.toBe("oops");
+			await expect(asyncResult).rejects.toBe("oops");
 		});
 	});
 
@@ -1325,7 +1325,7 @@ describe("ResultAsync", () => {
 			const val = await example();
 			expect(val.isErr()).toBe(true);
 
-			expect(val._unsafeUnwrapErr()).toEqual(TypeError("Oops: No!"));
+			expect(val._unsafeUnwrapErr()).toEqual(Error("Oops: No!"));
 		});
 
 		it("has a top level export", () => {

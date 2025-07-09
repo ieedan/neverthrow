@@ -16,11 +16,11 @@ export namespace ResultJson {
 	}
 
 	export function isErr<T, E>(result: ResultJson<T, E>): result is ErrJson<E> {
-		return "error" in result;
+		return result.__tag === "err";
 	}
 
 	export function isOk<T, E>(result: ResultJson<T, E>): result is OkJson<T> {
-		return "value" in result;
+		return result.__tag === "ok";
 	}
 
 	/**

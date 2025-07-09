@@ -14,12 +14,12 @@ importers:
       '@biomejs/biome':
         specifier: 2.1.1
         version: 2.1.1
-      '@changesets/changelog-github':
-        specifier: ^0.5.0
-        version: 0.5.1
       '@changesets/cli':
         specifier: ^2.27.7
         version: 2.29.5
+      '@svitejs/changesets-changelog-github-compact':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@types/node':
         specifier: ^18.19.39
         version: 18.19.117
@@ -139,9 +139,6 @@ packages:
 
   '@changesets/changelog-git@0.2.1':
     resolution: {integrity: sha512-x/xEleCFLH28c3bQeQIyeZf8lFXyDFVn1SgcBiR2Tw/r4IAWlk1fzxCEZ6NxQAjF2Nwtczoen3OA2qR+UawQ8Q==}
-
-  '@changesets/changelog-github@0.5.1':
-    resolution: {integrity: sha512-BVuHtF+hrhUScSoHnJwTELB4/INQxVFc+P/Qdt20BLiBFIHFJDDUaGsZw+8fQeJTRP5hJZrzpt3oZWh0G19rAQ==}
 
   '@changesets/cli@2.29.5':
     resolution: {integrity: sha512-0j0cPq3fgxt2dPdFsg4XvO+6L66RC0pZybT9F4dG5TBrLA3jA/1pNkdTXH9IBBVHkgsKrNKenI3n1mPyPlIydg==}
@@ -466,6 +463,10 @@ packages:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
 
+  '@svitejs/changesets-changelog-github-compact@1.2.0':
+    resolution: {integrity: sha512-08eKiDAjj4zLug1taXSIJ0kGL5cawjVCyJkBb6EWSg5fEPX6L+Wtr0CH2If4j5KYylz85iaZiFlUItvgJvll5g==}
+    engines: {node: ^14.13.1 || ^16.0.0 || >=18}
+
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -634,9 +635,9 @@ packages:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
 
-  dotenv@8.6.0:
-    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
-    engines: {node: '>=10'}
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+    engines: {node: '>=12'}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -1386,14 +1387,6 @@ snapshots:
     dependencies:
       '@changesets/types': 6.1.0
 
-  '@changesets/changelog-github@0.5.1':
-    dependencies:
-      '@changesets/get-github-info': 0.6.0
-      '@changesets/types': 6.1.0
-      dotenv: 8.6.0
-    transitivePeerDependencies:
-      - encoding
-
   '@changesets/cli@2.29.5':
     dependencies:
       '@changesets/apply-release-plan': 7.0.12
@@ -1687,6 +1680,13 @@ snapshots:
 
   '@sindresorhus/is@4.6.0': {}
 
+  '@svitejs/changesets-changelog-github-compact@1.2.0':
+    dependencies:
+      '@changesets/get-github-info': 0.6.0
+      dotenv: 16.6.1
+    transitivePeerDependencies:
+      - encoding
+
   '@types/estree@1.0.8': {}
 
   '@types/node@12.20.55': {}
@@ -1845,7 +1845,7 @@ snapshots:
     dependencies:
       path-type: 4.0.0
 
-  dotenv@8.6.0: {}
+  dotenv@16.6.1: {}
 
   emoji-regex@8.0.0: {}
 

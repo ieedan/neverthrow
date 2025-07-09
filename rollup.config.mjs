@@ -12,7 +12,7 @@ import typescript from "rollup-plugin-typescript2";
  * Until these are resolved, I choose to just use `rollup-plugin-typescript2`.
  * - `rollup-plugin-typescript2` generates `index.d.ts`, `chain.d.ts`, `result.d.ts` and
  * `result-async.d.ts` but this is inconsistent with the generated JavaScript files. This isn't a
- * huge issues unless someone tries to import `neverthrowx/dist/chain` which would error
+ * huge issues unless someone tries to import `nevereverthrow/dist/chain` which would error
  * because the underlying `.js` doesn't exist. To remedy this issue, I used `rollup-plugin-dts` to
  * merge `*.d.ts` files into a single `index.d.ts`.
  * - It's unfortunately a bit complicated to generate two build outputs but once some of the

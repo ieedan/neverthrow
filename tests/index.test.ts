@@ -872,9 +872,9 @@ describe("ResultAsync", () => {
 			expect(allResult[0]._unsafeUnwrap()).toEqual("1");
 		});
 
-		it("rejects if the underlying promise is rejected", () => {
+		it("rejects if the underlying promise is rejected", async () => {
 			const asyncResult = new ResultAsync(Promise.reject("oops"));
-			expect(asyncResult).rejects.toBe("oops");
+			await expect(asyncResult).rejects.toBe("oops");
 		});
 	});
 

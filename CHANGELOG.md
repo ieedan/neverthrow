@@ -1,4 +1,4 @@
-# neverthrow
+# neverthrowx
 
 ## 8.2.0
 

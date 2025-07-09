@@ -14,6 +14,7 @@ import {
 	Result,
 	ResultAsync,
 } from "../src";
+import { ResultJson } from "../src/result-json";
 
 describe("Result.Ok", () => {
 	it("Creates an Ok value", () => {
@@ -811,6 +812,23 @@ describe("Utils", () => {
 
 				expect(unwrappedResult.length).toBe(1);
 				expect(unwrappedResult[0]).toBe(mock);
+			});
+		});
+
+		describe("`Result.fromJson`", () => {
+			it("deserializes `Ok` from `okJson`", () => {
+				const resultJson = ResultJson.ok("test");
+
+				const result = Result.fromJson(resultJson);
+
+				expect(result.isOk()).toBe(true);
+			});
+
+			it("deserializes `Err` from `errorJson`", () => {
+				const resultJson = ResultJson.err("test");
+
+				const result = Result.fromJson(resultJson);
+				expect(result.isErr()).toBe(true);
 			});
 		});
 	});

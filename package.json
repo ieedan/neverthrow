@@ -19,7 +19,7 @@
 		"clean": "rm -rf ./dist ./tmp",
 		"build": "pnpm clean && rollup --config && mv tmp/*.js dist && attw --pack .",
 		"prepublishOnly": "pnpm run build",
-		"release": "changeset publish",
+		"ci:release": "changeset publish",
 		"version": "changeset version && pnpm i --lockfile-only"
 	},
 	"repository": {

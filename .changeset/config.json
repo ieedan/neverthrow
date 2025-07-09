@@ -3,7 +3,7 @@
 	"changelog": [
 		"@svitejs/changesets-changelog-github-compact",
 		{
-			"repo": "ieedan/neverthrow"
+			"repo": "ieedan/neverthrowx"
 		}
 	],
 	"commit": false,

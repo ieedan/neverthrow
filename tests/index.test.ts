@@ -14,6 +14,7 @@ import {
 	Result,
 	ResultAsync,
 } from "../src";
+import { ResultJson } from "../src/result-json";
 
 describe("Result.Ok", () => {
 	it("Creates an Ok value", () => {
@@ -811,6 +812,40 @@ describe("Utils", () => {
 
 				expect(unwrappedResult.length).toBe(1);
 				expect(unwrappedResult[0]).toBe(mock);
+			});
+		});
+
+		describe("`Result.fromJson`", () => {
+			it("deserializes `Ok` from `okJson`", () => {
+				const resultJson = ResultJson.ok("test");
+
+				const result = Result.fromJson(resultJson);
+
+				expect(result.isOk()).toBe(true);
+			});
+
+			it("deserializes `Err` from `errorJson`", () => {
+				const resultJson = ResultJson.err("test");
+
+				const result = Result.fromJson(resultJson);
+				expect(result.isErr()).toBe(true);
+			});
+		});
+
+		describe("`ResultJson.is`", () => {
+			it("Correctly identifies results", () => {
+				expect(ResultJson.is({ __tag: "ok", value: "test" })).toBe(true);
+				expect(ResultJson.is({ __tag: "err", error: "test" })).toBe(true);
+				expect(ResultJson.is({ __tag: "err" })).toBe(false);
+				expect(ResultJson.is({ __tag: "ok" })).toBe(false);
+				expect(ResultJson.is({})).toBe(false);
+				expect(ResultJson.is(1)).toBe(false);
+				expect(ResultJson.is("test")).toBe(false);
+				expect(ResultJson.is(true)).toBe(false);
+				expect(ResultJson.is(false)).toBe(false);
+				expect(ResultJson.is(null)).toBe(false);
+				expect(ResultJson.is(undefined)).toBe(false);
+				expect(ResultJson.is(Symbol("test"))).toBe(false);
 			});
 		});
 	});

@@ -1,5 +1,5 @@
 {
-	"name": "@iedan/neverthrow",
+	"name": "neverthrowx",
 	"version": "8.2.0",
 	"packageManager": "pnpm@10.13.1",
 	"description": "Stop throwing errors, and instead return Results!",
@@ -24,14 +24,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ieedan/neverthrow.git"
+		"url": "git+https://github.com/ieedan/neverthrowx.git"
 	},
-	"author": "Giorgio Delgado",
+	"author": "Aidan Bleser",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/ieedan/neverthrow/issues"
+		"url": "https://github.com/ieedan/neverthrowx/issues"
 	},
-	"homepage": "https://github.com/ieedan/neverthrow#readme",
+	"homepage": "https://github.com/ieedan/neverthrowx#readme",
 	"devDependencies": {
 		"@arethetypeswrong/cli": "^0.18.2",
 		"@biomejs/biome": "2.1.1",

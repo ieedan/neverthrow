@@ -9,6 +9,7 @@ import {
 	type InferErrTypes,
 	type InferOkTypes,
 } from "./_internals/utils";
+import { ResultJson } from "./result-json";
 
 export namespace Result {
 	/**
@@ -66,6 +67,20 @@ export namespace Result {
 		return combineResultListWithAllErrors(
 			resultList,
 		) as CombineResultsWithAllErrorsArray<T>;
+	}
+
+	/**
+	 * Attaches helper methods to the `ResultJson` type.
+	 *
+	 * @param result
+	 * @returns
+	 */
+	export function fromJson<T, E>(result: ResultJson<T, E>): Result<T, E> {
+		if (ResultJson.isOk(result)) {
+			return ok(result.value);
+		}
+
+		return err(result.error);
 	}
 }
 
@@ -146,6 +161,8 @@ export function safeTry<T, E>(
 }
 
 interface IResult<T, E> {
+	__tag: "ok" | "err";
+
 	/**
 	 * Used to check if a `Result` is an `OK`
 	 *
@@ -323,10 +340,19 @@ interface IResult<T, E> {
 	 * @param config
 	 */
 	_unsafeUnwrapErr(config?: ErrorConfig): E;
+
+	/** Converts this result into a transportable `ResultJson` object. */
+	toJson(): ResultJson<T, E>;
 }
 
 export class Ok<T, E> implements IResult<T, E> {
+	readonly __tag = "ok";
+
 	constructor(readonly value: T) {}
+
+	toJson(): ResultJson<T, E> {
+		return { __tag: this.__tag, value: this.value };
+	}
 
 	isOk(): this is Ok<T, E> {
 		return true;
@@ -436,7 +462,13 @@ export class Ok<T, E> implements IResult<T, E> {
 }
 
 export class Err<T, E> implements IResult<T, E> {
+	readonly __tag = "err";
+
 	constructor(readonly error: E) {}
+
+	toJson(): ResultJson<T, E> {
+		return { __tag: this.__tag, error: this.error };
+	}
 
 	isOk(): this is Ok<T, E> {
 		return false;

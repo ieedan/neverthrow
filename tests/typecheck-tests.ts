@@ -5,29 +5,21 @@
  */
 
 import { type N, Test } from "ts-toolbelt";
-import {
-	err,
-	errAsync,
-	fromSafePromise,
-	ok,
-	okAsync,
-	Result,
-	ResultAsync,
-} from "../src";
+import { err, errAsync, fromSafePromise, ok, okAsync, Result, ResultAsync } from "../src";
 import { safeTry, type Transpose } from "../src/result";
 
 type CreateTuple<L, V = string> = L extends number // Length must always be a number
 	? N.IsNegative<L> extends 1
 		? // Length must always be non-negative
-			never
+		  never
 		: // base case
-			L extends 0
-			? []
-			: // recursion depth check
-				// typescript has a limit.
-				N.Lower<L, 50> extends 1
-				? [V, ...CreateTuple<N.Sub<L, 1>, V>]
-				: never
+		L extends 0
+		? []
+		: // recursion depth check
+		// typescript has a limit.
+		N.Lower<L, 50> extends 1
+		? [V, ...CreateTuple<N.Sub<L, 1>, V>]
+		: never
 	: never;
 
 (function describe(_ = "Result") {
@@ -35,9 +27,8 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "Combines two equal error types (native scalar types)") {
 			type Expectation = Result<unknown, string>;
 
-			const result: Expectation = ok<number, string>(123).andThen((val) =>
-				err(`yoooooo dude${val}`),
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, string>(123).andThen((val) => err(`yoooooo dude${val}`));
 		});
 
 		(function it(_ = "Combines two equal error types (custom types)") {
@@ -48,8 +39,9 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = Result<string, MyError>;
 
-			const result: Expectation = ok<number, MyError>(123).andThen((val) =>
-				err<string, MyError>({ stack: "/blah", code: 500 }),
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, MyError>(123).andThen(() =>
+				err<string, MyError>({ stack: "/blah", code: 500 })
 			);
 		});
 
@@ -61,16 +53,14 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = Result<string, MyError | string[]>;
 
-			const result: Expectation = ok<number, MyError>(123).andThen(() =>
-				err<string, string[]>(["oh nooooo"]),
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, MyError>(123).andThen(() => err<string, string[]>(["oh nooooo"]));
 		});
 
-		(function it(
-			_ = "Infers error type when returning disjoint types (native scalar types)",
-		) {
+		(function it(_ = "Infers error type when returning disjoint types (native scalar types)") {
 			type Expectation = Result<unknown, string | number | boolean>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThen((val) => {
 				switch (val) {
 					case 1:
@@ -83,15 +73,14 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Infers error type when returning disjoint types (custom types)",
-		) {
+		(function it(_ = "Infers error type when returning disjoint types (custom types)") {
 			interface MyError {
 				stack: string;
 				code: number;
 			}
 			type Expectation = Result<unknown, string | number | MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThen((val) => {
 				switch (val) {
 					case 1:
@@ -104,11 +93,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Infers new ok type when returning both Ok and Err (same as initial)",
-		) {
+		(function it(_ = "Infers new ok type when returning both Ok and Err (same as initial)") {
 			type Expectation = Result<number, unknown>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThen((val) => {
 				switch (val) {
 					case 1:
@@ -119,12 +107,11 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Infers new ok type when returning both Ok and Err (different from initial)",
-		) {
+		(function it(_ = "Infers new ok type when returning both Ok and Err (different from initial)") {
 			const initial = ok<number, string>(123);
 			type Expectation = Result<string, unknown>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = initial.andThen((val) => {
 				switch (val) {
 					case 1:
@@ -142,6 +129,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			}
 			type Expectation = Result<unknown, string | number | MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThen((val) => {
 				switch (val) {
 					case 1:
@@ -157,6 +145,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "allows specifying the E and T types explicitly") {
 			type Expectation = Result<"yo", number>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok(123).andThen<"yo", number>((val) => {
 				return ok("yo");
 			});
@@ -167,9 +156,8 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "Combines two equal error types (native scalar types)") {
 			type Expectation = Result<number, string>;
 
-			const result: Expectation = ok<number, string>(123).andThrough((val) =>
-				err(`yoooooo dude${val}`),
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, string>(123).andThrough((val) => err(`yoooooo dude${val}`));
 		});
 
 		(function it(_ = "Combines two equal error types (custom types)") {
@@ -181,7 +169,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			type Expectation = Result<number, MyError>;
 
 			const result: Expectation = ok<number, MyError>(123).andThrough((val) =>
-				err<string, MyError>({ stack: "/blah", code: 500 }),
+				err<string, MyError>({ stack: "/blah", code: 500 })
 			);
 		});
 
@@ -194,15 +182,14 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			type Expectation = Result<number, MyError | string[]>;
 
 			const result: Expectation = ok<number, MyError>(123).andThrough((val) =>
-				err<string, string[]>(["oh nooooo"]),
+				err<string, string[]>(["oh nooooo"])
 			);
 		});
 
-		(function it(
-			_ = "Infers error type when returning disjoint types (native scalar types)",
-		) {
+		(function it(_ = "Infers error type when returning disjoint types (native scalar types)") {
 			type Expectation = Result<number, string | number | boolean>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -215,15 +202,14 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Infers error type when returning disjoint types (custom types)",
-		) {
+		(function it(_ = "Infers error type when returning disjoint types (custom types)") {
 			interface MyError {
 				stack: string;
 				code: number;
 			}
 			type Expectation = Result<number, string | number | MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -236,11 +222,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Returns the original ok type when returning both Ok and Err (same as initial)",
-		) {
+		(function it(_ = "Returns the original ok type when returning both Ok and Err (same as initial)") {
 			type Expectation = Result<number, unknown>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -251,12 +236,11 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Returns the original ok type when returning both Ok and Err (different from initial)",
-		) {
+		(function it(_ = "Returns the original ok type when returning both Ok and Err (different from initial)") {
 			const initial = ok<number, string>(123);
 			type Expectation = Result<number, unknown>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = initial.andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -274,6 +258,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			}
 			type Expectation = Result<number, string | number | MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -289,6 +274,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "allows specifying the E type explicitly") {
 			type Expectation = Result<number, string>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok(123).andThrough<string>((val) => {
 				return ok("yo");
 			});
@@ -296,11 +282,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 	});
 
 	(function describe(_ = "orElse") {
-		(function it(
-			_ = "the type of the argument is the error type of the result",
-		) {
+		(function it(_ = "the type of the argument is the error type of the result") {
 			type Expectation = string;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result = ok<number, string>(123).orElse((val: Expectation) => {
 				switch (val) {
 					case "2":
@@ -311,11 +296,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "infers the err return type with multiple returns (same type) ",
-		) {
+		(function it(_ = "infers the err return type with multiple returns (same type) ") {
 			type Expectation = Result<number, number>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).orElse((val) => {
 				switch (val) {
 					case "2":
@@ -326,11 +310,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "infers the err return type with multiple returns (different type) ",
-		) {
+		(function it(_ = "infers the err return type with multiple returns (different type) ") {
 			type Expectation = Result<number, number | string>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).orElse((val) => {
 				switch (val) {
 					case "2":
@@ -344,6 +327,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "infers ok and err return types with multiple returns ") {
 			type Expectation = Result<number, number | string>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).orElse((val) => {
 				switch (val) {
 					case "1":
@@ -359,24 +343,25 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "allows specifying the E and T types explicitly") {
 			type Expectation = Result<"yo", string>;
 
-			const result: Expectation = ok<"yo", number>("yo").orElse<"yo", string>(
-				(val) => {
-					return err("yo");
-				},
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<"yo", number>("yo").orElse<"yo", string>((val) => {
+				return err("yo");
+			});
 		});
 
 		(function it(_ = "Creates a union of ok types for disjoint types") {
 			type Expectation = Result<string | number, boolean>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = err<string, boolean[]>([true]).orElse((val) =>
-				ok<string, boolean>("recovered!"),
+				ok<string, boolean>("recovered!")
 			);
 		});
 
 		(function it(_ = "Infers ok type when returning disjoint types") {
 			type Expectation = Result<string | number | boolean, unknown>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = err<string, number>(123).orElse((val) => {
 				switch (val) {
 					case 1:
@@ -393,6 +378,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const initial = err<string, number>(123);
 			type Expectation = Result<string | true, false>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = initial.orElse((val) => {
 				switch (val) {
 					case 1:
@@ -405,49 +391,47 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 	});
 
 	(function describe(_ = "match") {
-		(function it(
-			_ = "the type of the arguments match the types of the result",
-		) {
+		(function it(_ = "the type of the arguments match the types of the result") {
 			type OKExpectation = number;
 			type ErrExpectation = string;
 
 			ok<number, string>(123).match(
 				(val: OKExpectation): void => void val,
-				(val: ErrExpectation): void => void val,
+				(val: ErrExpectation): void => void val
 			);
 			err<number, string>("123").match(
 				(val: OKExpectation): void => void val,
-				(val: ErrExpectation): void => void val,
+				(val: ErrExpectation): void => void val
 			);
 		});
 
-		(function it(
-			_ = "infers the resulting value from match callbacks (same type)",
-		) {
+		(function it(_ = "infers the resulting value from match callbacks (same type)") {
 			type Expectation = boolean;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const okResult: Expectation = ok<number, string>(123).match(
 				(val) => !!val,
-				(val) => !!val,
+				(val) => !!val
 			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const errResult: Expectation = err<number, string>("123").match(
 				(val) => !!val,
-				(val) => !!val,
+				(val) => !!val
 			);
 		});
 
-		(function it(
-			_ = "infers the resulting value from match callbacks (different type)",
-		) {
+		(function it(_ = "infers the resulting value from match callbacks (different type)") {
 			type Expectation = boolean | bigint;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const okResult: Expectation = ok<string, number>("123").match(
 				(val) => !!val,
-				(val) => BigInt(val),
+				(val) => BigInt(val)
 			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const errResult: Expectation = err<string, number>(123).match(
 				(val) => !!val,
-				(val) => BigInt(val),
+				(val) => BigInt(val)
 			);
 		});
 	});
@@ -456,9 +440,8 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "Combines two equal error types (native scalar types)") {
 			type Expectation = ResultAsync<unknown, string>;
 
-			const result: Expectation = ok<number, string>(123).asyncAndThen((val) =>
-				errAsync(`yoooooo dude${val}`),
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, string>(123).asyncAndThen((val) => errAsync(`yoooooo dude${val}`));
 		});
 
 		(function it(_ = "Combines two equal error types (custom types)") {
@@ -469,8 +452,9 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = ResultAsync<string, MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, MyError>(123).asyncAndThen((val) =>
-				errAsync<string, MyError>({ stack: "/blah", code: 500 }),
+				errAsync<string, MyError>({ stack: "/blah", code: 500 })
 			);
 		});
 
@@ -482,8 +466,9 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = ResultAsync<string, MyError | string[]>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, MyError>(123).asyncAndThen((val) =>
-				errAsync<string, string[]>(["oh nooooo"]),
+				errAsync<string, string[]>(["oh nooooo"])
 			);
 		});
 	});
@@ -492,8 +477,9 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "Combines two equal error types (native scalar types)") {
 			type Expectation = ResultAsync<unknown, string>;
 
-			const result: Expectation = ok<number, string>(123).asyncAndThrough(
-				(val) => errAsync(`yoooooo dude${val}`),
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, string>(123).asyncAndThrough((val) =>
+				errAsync(`yoooooo dude${val}`)
 			);
 		});
 
@@ -505,8 +491,9 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = ResultAsync<number, MyError>;
 
-			const result: Expectation = ok<number, MyError>(123).asyncAndThrough(
-				(val) => errAsync<string, MyError>({ stack: "/blah", code: 500 }),
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, MyError>(123).asyncAndThrough((val) =>
+				errAsync<string, MyError>({ stack: "/blah", code: 500 })
 			);
 		});
 
@@ -518,39 +505,36 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = ResultAsync<number, MyError | string[]>;
 
-			const result: Expectation = ok<number, MyError>(123).asyncAndThrough(
-				(val) => errAsync<string, string[]>(["oh nooooo"]),
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, MyError>(123).asyncAndThrough(() =>
+				errAsync<string, string[]>(["oh nooooo"])
 			);
 		});
 
-		(function it(
-			_ = "Infers error type when returning disjoint types (native scalar types)",
-		) {
+		(function it(_ = "Infers error type when returning disjoint types (native scalar types)") {
 			type Expectation = ResultAsync<number, string | number | boolean>;
 
-			const result: Expectation = ok<number, string>(123).asyncAndThrough(
-				(val) => {
-					switch (val) {
-						case 1:
-							return errAsync(`yoooooo dude${val}`);
-						case 2:
-							return errAsync(123);
-						default:
-							return errAsync(false);
-					}
-				},
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, string>(123).asyncAndThrough((val) => {
+				switch (val) {
+					case 1:
+						return errAsync(`yoooooo dude${val}`);
+					case 2:
+						return errAsync(123);
+					default:
+						return errAsync(false);
+				}
+			});
 		});
 
-		(function it(
-			_ = "Infers error type when returning disjoint types (custom types)",
-		) {
+		(function it(_ = "Infers error type when returning disjoint types (custom types)") {
 			interface MyError {
 				stack: string;
 				code: number;
 			}
 			type Expectation = Result<number, string | number | MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -563,11 +547,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Returns the original ok type when returning both Ok and Err (same as initial)",
-		) {
+		(function it(_ = "Returns the original ok type when returning both Ok and Err (same as initial)") {
 			type Expectation = Result<number, unknown>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -578,12 +561,11 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "Returns the original ok type when returning both Ok and Err (different from initial)",
-		) {
+		(function it(_ = "Returns the original ok type when returning both Ok and Err (different from initial)") {
 			const initial = ok<number, string>(123);
 			type Expectation = Result<number, unknown>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = initial.andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -601,6 +583,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			}
 			type Expectation = Result<number, string | number | MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok<number, string>(123).andThrough((val) => {
 				switch (val) {
 					case 1:
@@ -616,6 +599,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "allows specifying the E type explicitly") {
 			type Expectation = Result<number, string>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = ok(123).andThrough<string>((val) => {
 				return ok("yo");
 			});
@@ -628,28 +612,25 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			}
 			type Expectation = ResultAsync<number, string | number | MyError>;
 
-			const result: Expectation = ok<number, string>(123).asyncAndThrough(
-				(val) => {
-					switch (val) {
-						case 1:
-							return errAsync(`yoooooo dude${val}`);
-						case 2:
-							return okAsync(123);
-						default:
-							return errAsync({ stack: "/blah", code: 500 });
-					}
-				},
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = ok<number, string>(123).asyncAndThrough((val) => {
+				switch (val) {
+					case 1:
+						return errAsync(`yoooooo dude${val}`);
+					case 2:
+						return okAsync(123);
+					default:
+						return errAsync({ stack: "/blah", code: 500 });
+				}
+			});
 		});
 	});
 
 	(function describe(_ = "combine") {
 		(function it(_ = "combines different results into one") {
-			type Expectation = Result<
-				[number, string, boolean, boolean],
-				Error | string | string[]
-			>;
+			type Expectation = Result<[number, string, boolean, boolean], Error | string | string[]>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result = Result.combine([
 				ok<number, string>(1),
 				ok<string, string>("string"),
@@ -658,6 +639,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -667,6 +649,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = Result.combine([ok(1), ok("string")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -676,6 +659,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = Result.combine([err(1), err("abc")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -686,6 +670,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = Result.combine(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -696,13 +681,12 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = Result.combine(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
 		(function describe(_ = "inference on large tuples") {
-			(function it(
-				_ = "Should correctly infer the type on tuples with 6 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 6 elements") {
 				type Input = CreateTuple<6, Result<string, never>>;
 				type Expectation = Result<CreateTuple<6, string>, never>;
 
@@ -712,9 +696,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 7 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 7 elements") {
 				type Input = CreateTuple<7, Result<string, never>>;
 				type Expectation = Result<CreateTuple<7, string>, never>;
 
@@ -724,9 +706,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 8 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 8 elements") {
 				type Input = CreateTuple<8, Result<string, never>>;
 				type Expectation = Result<CreateTuple<8, string>, never>;
 
@@ -736,9 +716,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 9 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 9 elements") {
 				type Input = CreateTuple<9, Result<string, never>>;
 				type Expectation = Result<CreateTuple<9, string>, never>;
 
@@ -748,9 +726,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 10 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 10 elements") {
 				type Input = CreateTuple<10, Result<string, never>>;
 				type Expectation = Result<CreateTuple<10, string>, never>;
 
@@ -760,9 +736,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 11 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 11 elements") {
 				type Input = CreateTuple<11, Result<string, never>>;
 				type Expectation = Result<CreateTuple<11, string>, never>;
 
@@ -772,9 +746,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 12 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 12 elements") {
 				type Input = CreateTuple<12, Result<string, never>>;
 				type Expectation = Result<CreateTuple<12, string>, never>;
 
@@ -784,9 +756,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 13 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 13 elements") {
 				type Input = CreateTuple<13, Result<string, never>>;
 				type Expectation = Result<CreateTuple<13, string>, never>;
 
@@ -796,9 +766,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 14 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 14 elements") {
 				type Input = CreateTuple<14, Result<string, never>>;
 				type Expectation = Result<CreateTuple<14, string>, never>;
 
@@ -808,9 +776,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 15 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 15 elements") {
 				type Input = CreateTuple<15, Result<string, never>>;
 				type Expectation = Result<CreateTuple<15, string>, never>;
 
@@ -820,9 +786,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 16 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 16 elements") {
 				type Input = CreateTuple<16, Result<string, never>>;
 				type Expectation = Result<CreateTuple<16, string>, never>;
 
@@ -832,9 +796,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 17 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 17 elements") {
 				type Input = CreateTuple<17, Result<string, never>>;
 				type Expectation = Result<CreateTuple<17, string>, never>;
 
@@ -844,9 +806,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 18 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 18 elements") {
 				type Input = CreateTuple<18, Result<string, never>>;
 				type Expectation = Result<CreateTuple<18, string>, never>;
 
@@ -856,9 +816,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 19 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 19 elements") {
 				type Input = CreateTuple<19, Result<string, never>>;
 				type Expectation = Result<CreateTuple<19, string>, never>;
 
@@ -868,9 +826,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 20 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 20 elements") {
 				type Input = CreateTuple<20, Result<string, never>>;
 				type Expectation = Result<CreateTuple<20, string>, never>;
 
@@ -880,9 +836,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 21 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 21 elements") {
 				type Input = CreateTuple<21, Result<string, never>>;
 				type Expectation = Result<CreateTuple<21, string>, never>;
 
@@ -892,9 +846,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 22 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 22 elements") {
 				type Input = CreateTuple<22, Result<string, never>>;
 				type Expectation = Result<CreateTuple<22, string>, never>;
 
@@ -904,9 +856,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 23 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 23 elements") {
 				type Input = CreateTuple<23, Result<string, never>>;
 				type Expectation = Result<CreateTuple<23, string>, never>;
 
@@ -916,9 +866,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 24 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 24 elements") {
 				type Input = CreateTuple<24, Result<string, never>>;
 				type Expectation = Result<CreateTuple<24, string>, never>;
 
@@ -928,9 +876,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 25 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 25 elements") {
 				type Input = CreateTuple<25, Result<string, never>>;
 				type Expectation = Result<CreateTuple<25, string>, never>;
 
@@ -940,9 +886,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 26 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 26 elements") {
 				type Input = CreateTuple<26, Result<string, never>>;
 				type Expectation = Result<CreateTuple<26, string>, never>;
 
@@ -952,9 +896,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 27 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 27 elements") {
 				type Input = CreateTuple<27, Result<string, never>>;
 				type Expectation = Result<CreateTuple<27, string>, never>;
 
@@ -964,9 +906,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 28 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 28 elements") {
 				type Input = CreateTuple<28, Result<string, never>>;
 				type Expectation = Result<CreateTuple<28, string>, never>;
 
@@ -976,9 +916,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 29 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 29 elements") {
 				type Input = CreateTuple<29, Result<string, never>>;
 				type Expectation = Result<CreateTuple<29, string>, never>;
 
@@ -988,9 +926,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 30 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 30 elements") {
 				type Input = CreateTuple<30, Result<string, never>>;
 				type Expectation = Result<CreateTuple<30, string>, never>;
 
@@ -1000,9 +936,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 31 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 31 elements") {
 				type Input = CreateTuple<31, Result<string, never>>;
 				type Expectation = Result<CreateTuple<31, string>, never>;
 
@@ -1012,9 +946,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 32 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 32 elements") {
 				type Input = CreateTuple<32, Result<string, never>>;
 				type Expectation = Result<CreateTuple<32, string>, never>;
 
@@ -1024,9 +956,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 33 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 33 elements") {
 				type Input = CreateTuple<33, Result<string, never>>;
 				type Expectation = Result<CreateTuple<33, string>, never>;
 
@@ -1036,9 +966,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 34 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 34 elements") {
 				type Input = CreateTuple<34, Result<string, never>>;
 				type Expectation = Result<CreateTuple<34, string>, never>;
 
@@ -1048,9 +976,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 35 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 35 elements") {
 				type Input = CreateTuple<35, Result<string, never>>;
 				type Expectation = Result<CreateTuple<35, string>, never>;
 
@@ -1060,9 +986,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 36 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 36 elements") {
 				type Input = CreateTuple<36, Result<string, never>>;
 				type Expectation = Result<CreateTuple<36, string>, never>;
 
@@ -1072,9 +996,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 37 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 37 elements") {
 				type Input = CreateTuple<37, Result<string, never>>;
 				type Expectation = Result<CreateTuple<37, string>, never>;
 
@@ -1084,9 +1006,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 38 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 38 elements") {
 				type Input = CreateTuple<38, Result<string, never>>;
 				type Expectation = Result<CreateTuple<38, string>, never>;
 
@@ -1096,9 +1016,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 39 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 39 elements") {
 				type Input = CreateTuple<39, Result<string, never>>;
 				type Expectation = Result<CreateTuple<39, string>, never>;
 
@@ -1108,9 +1026,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 40 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 40 elements") {
 				type Input = CreateTuple<40, Result<string, never>>;
 				type Expectation = Result<CreateTuple<40, string>, never>;
 
@@ -1120,9 +1036,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 41 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 41 elements") {
 				type Input = CreateTuple<41, Result<string, never>>;
 				type Expectation = Result<CreateTuple<41, string>, never>;
 
@@ -1132,9 +1046,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 42 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 42 elements") {
 				type Input = CreateTuple<42, Result<string, never>>;
 				type Expectation = Result<CreateTuple<42, string>, never>;
 
@@ -1144,9 +1056,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 43 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 43 elements") {
 				type Input = CreateTuple<43, Result<string, never>>;
 				type Expectation = Result<CreateTuple<43, string>, never>;
 
@@ -1156,9 +1066,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 44 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 44 elements") {
 				type Input = CreateTuple<44, Result<string, never>>;
 				type Expectation = Result<CreateTuple<44, string>, never>;
 
@@ -1168,9 +1076,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 45 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 45 elements") {
 				type Input = CreateTuple<45, Result<string, never>>;
 				type Expectation = Result<CreateTuple<45, string>, never>;
 
@@ -1180,9 +1086,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 46 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 46 elements") {
 				type Input = CreateTuple<46, Result<string, never>>;
 				type Expectation = Result<CreateTuple<46, string>, never>;
 
@@ -1192,9 +1096,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 47 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 47 elements") {
 				type Input = CreateTuple<47, Result<string, never>>;
 				type Expectation = Result<CreateTuple<47, string>, never>;
 
@@ -1204,9 +1106,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 48 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 48 elements") {
 				type Input = CreateTuple<48, Result<string, never>>;
 				type Expectation = Result<CreateTuple<48, string>, never>;
 
@@ -1216,9 +1116,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 49 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 49 elements") {
 				type Input = CreateTuple<49, Result<string, never>>;
 				type Expectation = Result<CreateTuple<49, string>, never>;
 
@@ -1232,10 +1130,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 	(function describe(_ = "combineWithAllErrors") {
 		(function it(_ = "combines different results into one") {
-			type Expectation = Result<
-				[number, string, never, never],
-				(string[] | Error)[]
-			>;
+			type Expectation = Result<[number, string, never, never], (string[] | Error)[]>;
 
 			const result = Result.combineWithAllErrors([
 				ok(1),
@@ -1245,6 +1140,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -1254,6 +1150,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = Result.combineWithAllErrors([ok(1), ok("string")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -1263,6 +1160,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = Result.combineWithAllErrors([err(1), err("string")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -1273,25 +1171,23 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = Result.combineWithAllErrors(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
-		(function it(
-			_ = "combines arrays of different results to a result of an array",
-		) {
+		(function it(_ = "combines arrays of different results to a result of an array") {
 			type Expectation = Result<(string | boolean)[], (number | string)[]>;
 			const results: (Result<string, number> | Result<boolean, string>)[] = [];
 
 			const result = Result.combineWithAllErrors(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
 		(function describe(_ = "inference on large tuples") {
-			(function it(
-				_ = "Should correctly infer the type on tuples with 6 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 6 elements") {
 				type Input = CreateTuple<6, Result<string, number>>;
 				type Expectation = Result<CreateTuple<6, string>, number[]>;
 
@@ -1301,9 +1197,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 15 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 15 elements") {
 				type Input = CreateTuple<15, Result<string, number>>;
 				type Expectation = Result<CreateTuple<15, string>, number[]>;
 
@@ -1313,9 +1207,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 30 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 30 elements") {
 				type Input = CreateTuple<30, Result<string, number>>;
 				type Expectation = Result<CreateTuple<30, string>, number[]>;
 
@@ -1325,9 +1217,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 49 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 49 elements") {
 				type Input = CreateTuple<49, Result<string, number>>;
 				type Expectation = Result<CreateTuple<49, string>, number[]>;
 
@@ -1345,6 +1235,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			const result = err("error");
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignableToCheck: Expectation = result;
 		});
 
@@ -1353,6 +1244,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			const result = err({ abc: 123 });
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignableToCheck: Expectation = result;
 		});
 	});
@@ -1363,9 +1255,8 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "Combines two equal error types (native scalar types)") {
 			type Expectation = ResultAsync<unknown, string>;
 
-			const result: Expectation = okAsync<number, string>(123).andThen((val) =>
-				err("yoooooo dude" + val),
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = okAsync<number, string>(123).andThen((val) => err("yoooooo dude" + val));
 		});
 
 		(function it(_ = "Combines two equal error types (custom types)") {
@@ -1376,8 +1267,9 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = ResultAsync<string, MyError>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = okAsync<number, MyError>(123).andThen((val) =>
-				err<string, MyError>({ stack: "/blah", code: 500 }),
+				err<string, MyError>({ stack: "/blah", code: 500 })
 			);
 		});
 
@@ -1389,83 +1281,74 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = ResultAsync<string, MyError | string[]>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = okAsync<number, MyError>(123).andThen((val) =>
-				err<string, string[]>(["oh nooooo"]),
+				err<string, string[]>(["oh nooooo"])
 			);
 		});
 
 		(function describe(_ = "when returning Result types") {
-			(function it(
-				_ = "Infers error type when returning disjoint types (native scalar types)",
-			) {
+			(function it(_ = "Infers error type when returning disjoint types (native scalar types)") {
 				type Expectation = ResultAsync<unknown, string | number | boolean>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return err("yoooooo dude" + val);
-							case 2:
-								return err(123);
-							default:
-								return err(false);
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return err(`yoooooo dude${val}`);
+						case 2:
+							return err(123);
+						default:
+							return err(false);
+					}
+				});
 			});
 
-			(function it(
-				_ = "Infers error type when returning disjoint types (custom types)",
-			) {
+			(function it(_ = "Infers error type when returning disjoint types (custom types)") {
 				interface MyError {
 					stack: string;
 					code: number;
 				}
 				type Expectation = ResultAsync<unknown, string | number | MyError>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return err("yoooooo dude" + val);
-							case 2:
-								return err(123);
-							default:
-								return err({ stack: "/blah", code: 500 });
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return err(`yoooooo dude${val}`);
+						case 2:
+							return err(123);
+						default:
+							return err({ stack: "/blah", code: 500 });
+					}
+				});
 			});
 
-			(function it(
-				_ = "Infers new ok type when returning both Ok and Err (same as initial)",
-			) {
+			(function it(_ = "Infers new ok type when returning both Ok and Err (same as initial)") {
 				type Expectation = ResultAsync<number, unknown>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return err("yoooooo dude" + val);
-							default:
-								return ok(val + 456);
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return err(`yoooooo dude${val}`);
+						default:
+							return ok(val + 456);
+					}
+				});
 			});
 
-			(function it(
-				_ = "Infers new ok type when returning both Ok and Err (different from initial)",
-			) {
+			(function it(_ = "Infers new ok type when returning both Ok and Err (different from initial)") {
 				const initial = okAsync<number, string>(123);
 				type Expectation = ResultAsync<string, unknown>;
 
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
 				const result: Expectation = initial.andThen((val) => {
 					switch (val) {
 						case 1:
-							return err("yoooooo dude" + val);
+							return err(`yoooooo dude${val}`);
 						default:
-							return ok(val + " string");
+							return ok(`${val} string`);
 					}
 				});
 			});
@@ -1477,93 +1360,82 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				}
 				type Expectation = ResultAsync<unknown, string | number | MyError>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return err("yoooooo dude" + val);
-							case 2:
-								return ok(123);
-							default:
-								return err({ stack: "/blah", code: 500 });
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return err(`yoooooo dude${val}`);
+						case 2:
+							return ok(123);
+						default:
+							return err({ stack: "/blah", code: 500 });
+					}
+				});
 			});
 		});
 
 		(function describe(_ = "when returning ResultAsync types") {
-			(function it(
-				_ = "Infers error type when returning disjoint types (native scalar types)",
-			) {
+			(function it(_ = "Infers error type when returning disjoint types (native scalar types)") {
 				type Expectation = ResultAsync<unknown, string | number | boolean>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return errAsync("yoooooo dude" + val);
-							case 2:
-								return errAsync(123);
-							default:
-								return errAsync(false);
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return errAsync(`yoooooo dude${val}`);
+						case 2:
+							return errAsync(123);
+						default:
+							return errAsync(false);
+					}
+				});
 			});
 
-			(function it(
-				_ = "Infers error type when returning disjoint types (custom types)",
-			) {
+			(function it(_ = "Infers error type when returning disjoint types (custom types)") {
 				interface MyError {
 					stack: string;
 					code: number;
 				}
 				type Expectation = ResultAsync<unknown, string | number | MyError>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return errAsync("yoooooo dude" + val);
-							case 2:
-								return errAsync(123);
-							default:
-								return errAsync({ stack: "/blah", code: 500 });
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return errAsync(`yoooooo dude${val}`);
+						case 2:
+							return errAsync(123);
+						default:
+							return errAsync({ stack: "/blah", code: 500 });
+					}
+				});
 			});
 
-			(function it(
-				_ = "Infers new ok type when returning both Ok and Err (same as initial)",
-			) {
+			(function it(_ = "Infers new ok type when returning both Ok and Err (same as initial)") {
 				type Expectation = ResultAsync<number, unknown>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return errAsync("yoooooo dude" + val);
-							default:
-								return okAsync(val + 456);
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return errAsync(`yoooooo dude${val}`);
+						default:
+							return okAsync(val + 456);
+					}
+				});
 			});
 
-			(function it(
-				_ = "Infers new ok type when returning both Ok and Err (different from initial)",
-			) {
+			(function it(_ = "Infers new ok type when returning both Ok and Err (different from initial)") {
 				const initial = okAsync<number, string>(123);
 				type Expectation = ResultAsync<string, unknown>;
 
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
 				const result: Expectation = initial.andThen((val) => {
 					switch (val) {
 						case 1:
-							return errAsync("yoooooo dude" + val);
+							return errAsync(`yoooooo dude${val}`);
 						default:
-							return okAsync(val + " string");
+							return okAsync(`${val} string`);
 					}
 				});
 			});
@@ -1575,39 +1447,32 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				}
 				type Expectation = ResultAsync<unknown, string | number | MyError>;
 
-				const result: Expectation = okAsync<number, string>(123).andThen(
-					(val) => {
-						switch (val) {
-							case 1:
-								return errAsync("yoooooo dude" + val);
-							case 2:
-								return okAsync(123);
-							default:
-								return errAsync({ stack: "/blah", code: 500 });
-						}
-					},
-				);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = okAsync<number, string>(123).andThen((val) => {
+					switch (val) {
+						case 1:
+							return errAsync(`yoooooo dude${val}`);
+						case 2:
+							return okAsync(123);
+						default:
+							return errAsync({ stack: "/blah", code: 500 });
+					}
+				});
 			});
 		});
 
-		(function describe(
-			_ = "when returning a mix of Result and ResultAsync types",
-		) {
-			(function it(
-				_ = "allows for explicitly specifying the Ok and Err types when inference fails",
-			) {
-				type Expectation = ResultAsync<
-					number | boolean,
-					string | number | boolean
-				>;
+		(function describe(_ = "when returning a mix of Result and ResultAsync types") {
+			(function it(_ = "allows for explicitly specifying the Ok and Err types when inference fails") {
+				type Expectation = ResultAsync<number | boolean, string | number | boolean>;
 
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
 				const result: Expectation = okAsync<number, string>(123).andThen<
 					number | boolean,
 					string | number | boolean
 				>((val) => {
 					switch (val) {
 						case 1:
-							return errAsync("yoooooo dude" + val);
+							return errAsync(`yoooooo dude${val}`);
 						case 2:
 							return err(123);
 						default:
@@ -1621,19 +1486,19 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			(function it(_ = "infers err type from usage") {
 				type Expectation = ResultAsync<number, "impossible error">;
 
-				const result: Expectation = fromSafePromise(
-					new Promise<number>((resolve) => resolve(123)),
-				).map((val) => val);
+				// biome-ignore lint/correctness/noUnusedVariables: it's fine
+				const result: Expectation = fromSafePromise(new Promise<number>((resolve) => resolve(123))).map(
+					(val) => val
+				);
 			});
 		});
 	});
 
 	(function describe(_ = "orElse") {
-		(function it(
-			_ = "the type of the argument is the error type of the result",
-		) {
+		(function it(_ = "the type of the argument is the error type of the result") {
 			type Expectation = string;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result = okAsync<number, string>(123).orElse((val: Expectation) => {
 				switch (val) {
 					case "2":
@@ -1644,11 +1509,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "infers the err return type with multiple returns (same type) ",
-		) {
+		(function it(_ = "infers the err return type with multiple returns (same type) ") {
 			type Expectation = ResultAsync<number, number>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = okAsync<number, string>(123).orElse((val) => {
 				switch (val) {
 					case "2":
@@ -1659,11 +1523,10 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "infers the err return type with multiple returns (different type) ",
-		) {
+		(function it(_ = "infers the err return type with multiple returns (different type) ") {
 			type Expectation = ResultAsync<number, number | string>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = okAsync<number, string>(123).orElse((val) => {
 				switch (val) {
 					case "2":
@@ -1677,6 +1540,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "infers ok and err return types with multiple returns ") {
 			type Expectation = ResultAsync<number, number | string>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = okAsync<number, string>(123).orElse((val) => {
 				switch (val) {
 					case "1":
@@ -1689,15 +1553,11 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			});
 		});
 
-		(function it(
-			_ = "allows specifying ok and err return types when mixing Result and ResultAsync in returns ",
-		) {
+		(function it(_ = "allows specifying ok and err return types when mixing Result and ResultAsync in returns ") {
 			type Expectation = ResultAsync<number, number | string>;
 
-			const result: Expectation = okAsync<number, string>(123).orElse<
-				number,
-				number | string
-			>((val) => {
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = okAsync<number, string>(123).orElse<number, number | string>((val) => {
 				switch (val) {
 					case "1":
 						return ok(1);
@@ -1712,32 +1572,33 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		(function it(_ = "Creates a union of ok types for disjoint types") {
 			type Expectation = ResultAsync<string | number, boolean>;
 
-			const result: Expectation = errAsync<string, boolean[]>([true]).orElse(
-				(val) => ok<string, boolean>("recovered!"),
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = errAsync<string, boolean[]>([true]).orElse((val) =>
+				ok<string, boolean>("recovered!")
 			);
 		});
 
 		(function it(_ = "Infers ok type when returning disjoint types") {
 			type Expectation = ResultAsync<string | number | boolean, unknown>;
 
-			const result: Expectation = errAsync<string, number>(123).orElse(
-				(val) => {
-					switch (val) {
-						case 1:
-							return okAsync("yoooooo dude" + val);
-						case 2:
-							return okAsync(123);
-						default:
-							return okAsync(false);
-					}
-				},
-			);
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
+			const result: Expectation = errAsync<string, number>(123).orElse((val) => {
+				switch (val) {
+					case 1:
+						return okAsync(`yoooooo dude${val}`);
+					case 2:
+						return okAsync(123);
+					default:
+						return okAsync(false);
+				}
+			});
 		});
 
 		(function it(_ = "Infers new type when returning both Ok and Err") {
 			const initial = errAsync<string, number>(123);
 			type Expectation = ResultAsync<string | true, false>;
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const result: Expectation = initial.orElse((val) => {
 				switch (val) {
 					case 1:
@@ -1751,10 +1612,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 	(function describe(_ = "combine") {
 		(function it(_ = "combines different result asyncs into one") {
-			type Expectation = ResultAsync<
-				[number, string, boolean, boolean],
-				Error | string | string[]
-			>;
+			type Expectation = ResultAsync<[number, string, boolean, boolean], Error | string | string[]>;
 
 			const result = ResultAsync.combine([
 				okAsync<number, string>(1),
@@ -1773,6 +1631,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = ResultAsync.combine([okAsync(1), okAsync("string")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -1782,6 +1641,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = ResultAsync.combine([errAsync(1), errAsync("string")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
@@ -1792,25 +1652,23 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			const result = ResultAsync.combine(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
-		(function it(
-			_ = "combines arrays of result asyncs to a result async of an array",
-		) {
+		(function it(_ = "combines arrays of result asyncs to a result async of an array") {
 			type Expectation = ResultAsync<string[], string>;
 			const results: ResultAsync<string, string>[] = [];
 
 			const result = ResultAsync.combine(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
 		(function describe(_ = "inference on large tuples") {
-			(function it(
-				_ = "Should correctly infer the type on tuples with 6 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 6 elements") {
 				type Input = CreateTuple<6, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<6, string>, never>;
 
@@ -1820,9 +1678,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 7 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 7 elements") {
 				type Input = CreateTuple<7, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<7, string>, never>;
 
@@ -1832,9 +1688,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 8 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 8 elements") {
 				type Input = CreateTuple<8, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<8, string>, never>;
 
@@ -1844,9 +1698,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 9 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 9 elements") {
 				type Input = CreateTuple<9, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<9, string>, never>;
 
@@ -1856,9 +1708,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 10 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 10 elements") {
 				type Input = CreateTuple<10, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<10, string>, never>;
 
@@ -1868,9 +1718,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 11 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 11 elements") {
 				type Input = CreateTuple<11, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<11, string>, never>;
 
@@ -1880,9 +1728,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 12 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 12 elements") {
 				type Input = CreateTuple<12, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<12, string>, never>;
 
@@ -1892,9 +1738,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 13 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 13 elements") {
 				type Input = CreateTuple<13, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<13, string>, never>;
 
@@ -1904,9 +1748,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 14 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 14 elements") {
 				type Input = CreateTuple<14, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<14, string>, never>;
 
@@ -1916,9 +1758,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 15 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 15 elements") {
 				type Input = CreateTuple<15, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<15, string>, never>;
 
@@ -1928,9 +1768,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 16 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 16 elements") {
 				type Input = CreateTuple<16, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<16, string>, never>;
 
@@ -1940,9 +1778,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 17 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 17 elements") {
 				type Input = CreateTuple<17, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<17, string>, never>;
 
@@ -1952,9 +1788,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 18 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 18 elements") {
 				type Input = CreateTuple<18, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<18, string>, never>;
 
@@ -1964,9 +1798,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 19 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 19 elements") {
 				type Input = CreateTuple<19, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<19, string>, never>;
 
@@ -1976,9 +1808,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 20 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 20 elements") {
 				type Input = CreateTuple<20, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<20, string>, never>;
 
@@ -1988,9 +1818,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 21 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 21 elements") {
 				type Input = CreateTuple<21, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<21, string>, never>;
 
@@ -2000,9 +1828,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 22 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 22 elements") {
 				type Input = CreateTuple<22, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<22, string>, never>;
 
@@ -2012,9 +1838,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 23 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 23 elements") {
 				type Input = CreateTuple<23, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<23, string>, never>;
 
@@ -2024,9 +1848,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 24 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 24 elements") {
 				type Input = CreateTuple<24, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<24, string>, never>;
 
@@ -2036,9 +1858,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 25 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 25 elements") {
 				type Input = CreateTuple<25, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<25, string>, never>;
 
@@ -2048,9 +1868,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 26 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 26 elements") {
 				type Input = CreateTuple<26, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<26, string>, never>;
 
@@ -2060,9 +1878,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 27 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 27 elements") {
 				type Input = CreateTuple<27, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<27, string>, never>;
 
@@ -2072,9 +1888,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 28 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 28 elements") {
 				type Input = CreateTuple<28, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<28, string>, never>;
 
@@ -2084,9 +1898,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 29 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 29 elements") {
 				type Input = CreateTuple<29, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<29, string>, never>;
 
@@ -2096,9 +1908,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 30 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 30 elements") {
 				type Input = CreateTuple<30, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<30, string>, never>;
 
@@ -2108,9 +1918,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 31 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 31 elements") {
 				type Input = CreateTuple<31, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<31, string>, never>;
 
@@ -2120,9 +1928,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 32 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 32 elements") {
 				type Input = CreateTuple<32, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<32, string>, never>;
 
@@ -2132,9 +1938,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 33 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 33 elements") {
 				type Input = CreateTuple<33, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<33, string>, never>;
 
@@ -2144,9 +1948,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 34 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 34 elements") {
 				type Input = CreateTuple<34, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<34, string>, never>;
 
@@ -2156,9 +1958,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 35 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 35 elements") {
 				type Input = CreateTuple<35, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<35, string>, never>;
 
@@ -2168,9 +1968,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 36 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 36 elements") {
 				type Input = CreateTuple<36, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<36, string>, never>;
 
@@ -2180,9 +1978,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 37 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 37 elements") {
 				type Input = CreateTuple<37, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<37, string>, never>;
 
@@ -2192,9 +1988,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 38 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 38 elements") {
 				type Input = CreateTuple<38, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<38, string>, never>;
 
@@ -2204,9 +1998,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 39 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 39 elements") {
 				type Input = CreateTuple<39, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<39, string>, never>;
 
@@ -2216,9 +2008,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 40 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 40 elements") {
 				type Input = CreateTuple<40, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<40, string>, never>;
 
@@ -2228,9 +2018,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 41 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 41 elements") {
 				type Input = CreateTuple<41, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<41, string>, never>;
 
@@ -2240,9 +2028,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 42 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 42 elements") {
 				type Input = CreateTuple<42, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<42, string>, never>;
 
@@ -2252,9 +2038,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 43 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 43 elements") {
 				type Input = CreateTuple<43, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<43, string>, never>;
 
@@ -2264,9 +2048,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 44 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 44 elements") {
 				type Input = CreateTuple<44, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<44, string>, never>;
 
@@ -2276,9 +2058,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 45 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 45 elements") {
 				type Input = CreateTuple<45, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<45, string>, never>;
 
@@ -2288,9 +2068,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 46 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 46 elements") {
 				type Input = CreateTuple<46, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<46, string>, never>;
 
@@ -2300,9 +2078,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 47 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 47 elements") {
 				type Input = CreateTuple<47, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<47, string>, never>;
 
@@ -2312,9 +2088,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 48 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 48 elements") {
 				type Input = CreateTuple<48, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<48, string>, never>;
 
@@ -2324,9 +2098,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 49 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 49 elements") {
 				type Input = CreateTuple<49, ResultAsync<string, never>>;
 				type Expectation = ResultAsync<CreateTuple<49, string>, never>;
 
@@ -2340,10 +2112,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 	(function describe(_ = "combineWithAllErrors") {
 		(function it(_ = "combines different result asyncs into one") {
-			type Expectation = ResultAsync<
-				[number, string, never, never],
-				(string[] | Error)[]
-			>;
+			type Expectation = ResultAsync<[number, string, never, never], (string[] | Error)[]>;
 
 			const result = ResultAsync.combineWithAllErrors([
 				okAsync(1),
@@ -2353,64 +2122,54 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 			]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
 		(function it(_ = "combines only ok result asyncs into one") {
 			type Expectation = ResultAsync<[number, string], never[]>;
 
-			const result = ResultAsync.combineWithAllErrors([
-				okAsync(1),
-				okAsync("string"),
-			]);
+			const result = ResultAsync.combineWithAllErrors([okAsync(1), okAsync("string")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
 		(function it(_ = "combines only err result asyncs into one") {
 			type Expectation = ResultAsync<[never, never], (number | string)[]>;
 
-			const result = ResultAsync.combineWithAllErrors([
-				errAsync(1),
-				errAsync("string"),
-			]);
+			const result = ResultAsync.combineWithAllErrors([errAsync(1), errAsync("string")]);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
-		(function it(
-			_ = "combines arrays of result asyncs to a result of an array",
-		) {
+		(function it(_ = "combines arrays of result asyncs to a result of an array") {
 			type Expectation = ResultAsync<string[], (number | string)[]>;
 			const results: ResultAsync<string, number | string>[] = [];
 
 			const result = ResultAsync.combineWithAllErrors(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
-		(function it(
-			_ = "combines arrays of different result asyncs to a result of an array",
-		) {
+		(function it(_ = "combines arrays of different result asyncs to a result of an array") {
 			type Expectation = ResultAsync<(string | boolean)[], (number | string)[]>;
-			const results: (
-				| ResultAsync<string, number>
-				| ResultAsync<boolean, string>
-			)[] = [];
+			const results: (ResultAsync<string, number> | ResultAsync<boolean, string>)[] = [];
 
 			const result = ResultAsync.combineWithAllErrors(results);
 
 			const assignableToCheck: Expectation = result;
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const assignablefromCheck: typeof result = assignableToCheck;
 		});
 
 		(function describe(_ = "inference on large tuples") {
-			(function it(
-				_ = "Should correctly infer the type on tuples with 6 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 6 elements") {
 				type Input = CreateTuple<6, ResultAsync<string, number>>;
 				type Expectation = ResultAsync<CreateTuple<6, string>, number[]>;
 
@@ -2420,9 +2179,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 15 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 15 elements") {
 				type Input = CreateTuple<15, ResultAsync<string, number>>;
 				type Expectation = ResultAsync<CreateTuple<15, string>, number[]>;
 
@@ -2432,9 +2189,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 30 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 30 elements") {
 				type Input = CreateTuple<30, ResultAsync<string, number>>;
 				type Expectation = ResultAsync<CreateTuple<30, string>, number[]>;
 
@@ -2444,9 +2199,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "Should correctly infer the type on tuples with 49 elements",
-			) {
+			(function it(_ = "Should correctly infer the type on tuples with 49 elements") {
 				type Input = CreateTuple<49, ResultAsync<string, number>>;
 				type Expectation = ResultAsync<CreateTuple<49, string>, number[]>;
 
@@ -2462,9 +2215,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 (function describe(_ = "Utility types") {
 	(function describe(_ = "safeTry") {
 		(function describe(_ = "sync generator") {
-			(function it(
-				_ = "should correctly infer the result type when generator returns Ok",
-			) {
+			(function it(_ = "should correctly infer the result type when generator returns Ok") {
 				interface ReturnMyError {
 					name: "ReturnMyError";
 				}
@@ -2477,9 +2228,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "should correctly infer the result type when generator returns Err",
-			) {
+			(function it(_ = "should correctly infer the result type when generator returns Err") {
 				interface ReturnMyError {
 					name: "ReturnMyError";
 				}
@@ -2510,9 +2259,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				});
 			});
 
-			(function it(
-				_ = 'should correctly infer the result type with multiple "yield*"',
-			) {
+			(function it(_ = 'should correctly infer the result type with multiple "yield*"') {
 				interface FirstYieldMyError {
 					name: "FirstYieldMyError";
 				}
@@ -2523,10 +2270,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 					name: "ReturnMyError";
 				}
 
-				type Expectation = Result<
-					string,
-					FirstYieldMyError | SecondYieldMyError | ReturnMyError
-				>;
+				type Expectation = Result<string, FirstYieldMyError | SecondYieldMyError | ReturnMyError>;
 
 				const result = safeTry(function* () {
 					yield* ok<number, FirstYieldMyError>(123).safeUnwrap();
@@ -2540,9 +2284,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 		});
 
 		(function describe(_ = "async generator") {
-			(function it(
-				_ = "should correctly infer the result type when generator returns OkAsync",
-			) {
+			(function it(_ = "should correctly infer the result type when generator returns OkAsync") {
 				interface ReturnMyError {
 					name: "ReturnMyError";
 				}
@@ -2555,9 +2297,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				Test.checks([Test.check<typeof result, Expectation, Test.Pass>()]);
 			});
 
-			(function it(
-				_ = "should correctly infer the result type when generator returns ErrAsync",
-			) {
+			(function it(_ = "should correctly infer the result type when generator returns ErrAsync") {
 				interface ReturnMyError {
 					name: "ReturnMyError";
 				}
@@ -2581,18 +2321,14 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 				safeTry(async function* () {
 					type Expectation = number;
 
-					const unwrapped = yield* okAsync<number, YieldMyError>(
-						123,
-					).safeUnwrap();
+					const unwrapped = yield* okAsync<number, YieldMyError>(123).safeUnwrap();
 					Test.checks([Test.check<typeof unwrapped, Expectation, Test.Pass>()]);
 
 					return ok<string, ReturnMyError>("string");
 				});
 			});
 
-			(function it(
-				_ = 'should correctly infer the result type with multiple "yield*"',
-			) {
+			(function it(_ = 'should correctly infer the result type with multiple "yield*"') {
 				interface FirstYieldMyError {
 					name: "FirstYieldMyError";
 				}
@@ -2603,10 +2339,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 					name: "ReturnMyError";
 				}
 
-				type Expectation = ResultAsync<
-					string,
-					FirstYieldMyError | SecondYieldMyError | ReturnMyError
-				>;
+				type Expectation = ResultAsync<string, FirstYieldMyError | SecondYieldMyError | ReturnMyError>;
 
 				const result = safeTry(async function* () {
 					yield* okAsync<number, FirstYieldMyError>(123).safeUnwrap();
@@ -2630,6 +2363,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = [[1, 3, 5], [2, 4, 6]];
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const transposed: Expectation = transpose(input);
 		});
 
@@ -2638,6 +2372,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = [];
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const transposed: Expectation = transpose(input);
 		});
 
@@ -2646,6 +2381,7 @@ type CreateTuple<L, V = string> = L extends number // Length must always be a nu
 
 			type Expectation = [[1], [3]];
 
+			// biome-ignore lint/correctness/noUnusedVariables: it's fine
 			const transposed: Expectation = transpose<typeof input>(input);
 		});
 	});
@@ -2659,4 +2395,5 @@ declare function transpose<A extends unknown[][]>(input: A): Transpose<[...A]>;
 //#endregion
 
 // create dummy values with a desired type
+// biome-ignore lint/suspicious/noExplicitAny: it's fine
 const input = <T>(): T => 123 as any;

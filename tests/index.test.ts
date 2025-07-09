@@ -1325,7 +1325,7 @@ describe("ResultAsync", () => {
 			const val = await example();
 			expect(val.isErr()).toBe(true);
 
-			expect(val._unsafeUnwrapErr()).toEqual(TypeError("Oops: No!"));
+			expect(val._unsafeUnwrapErr()).toEqual(Error("Oops: No!"));
 		});
 
 		it("has a top level export", () => {

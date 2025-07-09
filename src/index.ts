@@ -7,3 +7,4 @@ export {
 	okAsync,
 	ResultAsync,
 } from "./result-async";
+export { ErrJson, OkJson, ResultJson } from "./result-json";

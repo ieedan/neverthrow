@@ -1,5 +1,11 @@
 # neverthrowx
 
+## 8.3.0
+
+### Minor Changes
+
+- feat: Add utilities for transporting `Result`s between the server and the client. ([#3](https://github.com/ieedan/neverthrowx/pull/3))
+
 ## 8.2.0
 
 ### Minor Changes

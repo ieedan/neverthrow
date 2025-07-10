@@ -1,8 +1,8 @@
 {
 	"name": "nevereverthrow",
-	"version": "8.3.0",
+	"version": "0.0.0",
 	"packageManager": "pnpm@10.13.1",
-	"description": "Stop throwing errors, and instead return Results!",
+	"description": "Never ever throw with nevereverthrow!",
 	"main": "dist/index.cjs.js",
 	"module": "dist/index.es.js",
 	"types": "dist/index.d.ts",

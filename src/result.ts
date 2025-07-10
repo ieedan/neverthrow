@@ -309,6 +309,20 @@ interface IResult<T, E> {
 	match<A, B = A>(ok: (t: T) => A, err: (e: E) => B): A | B;
 
 	/**
+	 * Assert that a value must be `Ok<T>` or crash the program with an error message.
+	 *
+	 * @param message - Message or Error to show when the assertion fails
+	 */
+	expect(message: string | Error): T;
+
+	/**
+	 * Assert that a value must be `Err<E>` or crash the program with an error message.
+	 *
+	 * @param message - Message or Error to show when the assertion fails
+	 */
+	expectErr(message: string | Error): E;
+
+	/**
 	 * @deprecated will be removed in 9.0.0.
 	 *
 	 * You can use `safeTry` without this method.
@@ -437,6 +451,16 @@ export class Ok<T, E> implements IResult<T, E> {
 		return ok(this.value);
 	}
 
+	expect() {
+		return this.value;
+	}
+
+	expectErr(message: string | Error): never {
+		if (message instanceof Error) throw message;
+
+		throw createNeverThrowError(message, this);
+	}
+
 	safeUnwrap(): Generator<Err<never, E>, T> {
 		const value = this.value;
 		return (function* () {
@@ -541,6 +565,16 @@ export class Err<T, E> implements IResult<T, E> {
 
 	match<A, B = A>(_ok: (t: T) => A, err: (e: E) => B): A | B {
 		return err(this.error);
+	}
+
+	expect(message: string | Error): T {
+		if (message instanceof Error) throw message;
+
+		throw createNeverThrowError(message, this);
+	}
+
+	expectErr() {
+		return this.error;
 	}
 
 	safeUnwrap(): Generator<Err<never, E>, T> {

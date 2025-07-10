@@ -30,7 +30,9 @@ describe("Result.Ok", () => {
 
 		expect(okVal.isOk()).toBe(true);
 		expect(okVal.isErr()).toBe(false);
+		expect(okVal.value).toBe(null);
 		expect(okVal._unsafeUnwrap()).toBe(null);
+		expect(okVal.expect()).toBe(null);
 	});
 
 	it("Creates an Ok value with undefined", () => {
@@ -38,7 +40,9 @@ describe("Result.Ok", () => {
 
 		expect(okVal.isOk()).toBe(true);
 		expect(okVal.isErr()).toBe(false);
+		expect(okVal.value).toBeUndefined();
 		expect(okVal._unsafeUnwrap()).toBeUndefined();
+		expect(okVal.expect()).toBeUndefined();
 	});
 
 	it("Is comparable", () => {
@@ -532,6 +536,40 @@ describe("Result.fromThrowable", () => {
 		expect(result.isErr()).toBe(true);
 		expect(result).toBeInstanceOf(Err);
 		expect(result._unsafeUnwrapErr()).toEqual({ message: "error" });
+	});
+
+	it("Throws the correct message from `.expect`", () => {
+		const res = err("oops!");
+
+		expect(() => res.expect("Must be fine")).toThrow("Must be fine");
+		expect(res.expectErr()).toBe("oops!");
+	});
+
+	it("Throws the correct message from `.expectErr`", () => {
+		const res = ok("yay!");
+
+		expect(() => res.expectErr("Must be fine")).toThrow("Must be fine");
+		expect(res.expect()).toBe("yay!");
+	});
+
+	it("Throws the correct error from `.expect`", () => {
+		class MyError extends Error {
+			prop = "my_error";
+		}
+
+		const res = err("oops!");
+
+		expect(() => res.expect(new MyError())).toThrow(MyError);
+	});
+
+	it("Throws the correct error from `.expectErr`", () => {
+		class MyError extends Error {
+			prop = "my_error";
+		}
+
+		const res = ok("yay!");
+
+		expect(() => res.expectErr(new MyError())).toThrow(MyError);
 	});
 
 	it("has a top level export", () => {

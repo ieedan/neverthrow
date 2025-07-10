@@ -4,6 +4,10 @@
 
 > `nevereverthrow` is a fork of [neverthrow](https://github.com/supermacro/neverthrow) that extends it's behavior with some additional useful utilities. It remains fully backward compatible to make switching as simple as changing an import.
 
+```sh
+npm i nevereverthrow
+```
+
 <div id="toc"></div>
 
 ## Table Of Contents
